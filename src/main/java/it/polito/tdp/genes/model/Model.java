@@ -17,7 +17,7 @@ public class Model {
 	private Graph<Integer, DefaultWeightedEdge> grafo;
 	private GenesDao dao;
 	private List<Integer> migliore;
-	private int lunghezzaMax;
+	private double lunghezzaMax;
 	
 	public Model() {
 		dao = new GenesDao();
@@ -27,44 +27,54 @@ public class Model {
 		List<Integer> parziale = new ArrayList<>();
 		this.migliore = new ArrayList<>();
 		this.lunghezzaMax = 0;
-		
+//		List<DefaultWeightedEdge> archi = new ArrayList<>(this.grafo.edgeSet());
+		//dalla lista di archi mi prendo un vertice qualsiasi
 		for(Integer cromosoma : this.grafo.vertexSet()) {
-			if(parziale.size()==0) {
-				parziale.add(cromosoma);
-				ricorsione(parziale, 1, S);
+			parziale.add(cromosoma);
+			ricorsione(parziale, 1, S);
 			}
-		}
-		
 		return migliore;
 	}
 	
 	private void ricorsione(List<Integer> parziale, int i, double s) {
-		int pesoCammino = CalcolaCammino(parziale);
+		double pesoCammino = CalcolaCammino(parziale);
 		if(pesoCammino>lunghezzaMax) {
 			lunghezzaMax = pesoCammino;
 			migliore = new LinkedList<>(parziale);
 		}
-		for(Integer cromosoma1 : Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
-			if(!parziale.contains(cromosoma1) && valida(parziale, cromosoma1, s)) { // evito di creare dei cicli
-				parziale.add(cromosoma1);
-				ricorsione(parziale, i+1, s);
-				parziale.remove(parziale.size()-1);
+		if(Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1)).size()!=0) {
+			
+			for(Integer cromosoma1 : Graphs.neighborListOf(this.grafo, parziale.get(parziale.size()-1))) {
+				if(!parziale.contains(cromosoma1) && this.grafo.getEdge(parziale.get(parziale.size()-1), cromosoma1)!=null &&
+						this.grafo.getEdgeWeight(this.grafo.getEdge(parziale.get(parziale.size()-1), cromosoma1)) > s) { 
+					parziale.add(cromosoma1);
+//					if(valida(parziale, cromosoma1, s))
+					ricorsione(parziale, i+1, s);
+					parziale.remove(parziale.size()-1);
+					}
 				}
-			}
+		}
+		
 	}
 
-	private int CalcolaCammino(List<Integer> parziale) {
+	private double CalcolaCammino(List<Integer> parziale) {
 		// TODO Auto-generated method stub
-		int somma = 0;
-		for(DefaultWeightedEdge d : this.grafo.edgeSet()) {
-			somma += this.grafo.getEdgeWeight(d);
-		}
-		return somma;
+		if(parziale.size()>1) {
+			double somma = 0;
+			for(int i=0; i<parziale.size()-1;i++) {
+				int p = parziale.get(i);//vertice
+				int a = parziale.get(i+1);// il successivo
+				double peso = this.grafo.getEdgeWeight(this.grafo.getEdge(p, a));
+				somma += peso;
+			}
+			return somma;
+		}else 
+			return -1;
 	}
 
 	private boolean valida(List<Integer> parziale, Integer cromosoma1, double s) {
 		// TODO Auto-generated method stub
-		if(this.grafo.getEdgeWeight(this.grafo.getEdge(parziale.get(parziale.size()-1), cromosoma1))>s) {
+		if(this.grafo.getEdgeWeight(this.grafo.getEdge(parziale.get(parziale.size()-1), cromosoma1)) > s) {
 			return true;
 		}
 		return false;

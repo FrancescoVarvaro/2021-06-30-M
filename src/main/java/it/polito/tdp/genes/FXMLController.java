@@ -45,12 +45,13 @@ public class FXMLController {
 //    	txtResult.appendText("MIN: "+model.getPesoMinMax().get(0)+" MAX: "+model.getPesoMinMax().get(1));
     	txtResult.appendText(model.getPesoMinMax()+"\n");
     	double soglia = Integer.parseInt(txtSoglia.getText());
-    	txtResult.appendText("Soglia "+soglia+" -------- "+ model.getMaggioriMinoriS(soglia));
+    	txtResult.appendText("Soglia "+soglia+" -------- "+ model.getMaggioriMinoriS(soglia)+"\n");
     }
 
     @FXML
     void doRicerca(ActionEvent event) {
-
+    	double soglia = Integer.parseInt(txtSoglia.getText());
+    	txtResult.appendText(model.calcolaPercorso(soglia)+" ");
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
