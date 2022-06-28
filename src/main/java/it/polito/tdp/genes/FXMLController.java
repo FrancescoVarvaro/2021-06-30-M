@@ -38,7 +38,14 @@ public class FXMLController {
 
     @FXML
     void doContaArchi(ActionEvent event) {
-
+    	txtResult.clear();
+    	model.creaGrafo();
+    	txtResult.appendText("vertici: "+ model.nVertici()+"\n");
+    	txtResult.appendText("archi : "+model.nEdge() +"\n");
+//    	txtResult.appendText("MIN: "+model.getPesoMinMax().get(0)+" MAX: "+model.getPesoMinMax().get(1));
+    	txtResult.appendText(model.getPesoMinMax()+"\n");
+    	double soglia = Integer.parseInt(txtSoglia.getText());
+    	txtResult.appendText("Soglia "+soglia+" -------- "+ model.getMaggioriMinoriS(soglia));
     }
 
     @FXML
